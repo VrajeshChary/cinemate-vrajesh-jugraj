@@ -68,7 +68,6 @@ class AppTheme {
       colorScheme: const ColorScheme.dark(
         primary: primaryAccent,
         surface: cardColor,
-        background: background,
       ),
     );
   }

@@ -10,17 +10,16 @@ import 'favourites_screen.dart';
 import 'movie_details_screen.dart';
 import 'search_screen.dart';
 
-/// HomeScreen is the main entry screen of CINEMATE.
+/// HomeScreen with 3-Level Responsive Design (Mobile, Tablet, Desktop).
 /// 
 /// Demonstrates:
-/// - StatefulWidget and lifecycle (initState)
-/// - Asynchronous REST API fetching with async/await and try-catch
-/// - CircularProgressIndicator for loading states
-/// - Error handling with retry capability
-/// - Featured movie banner with Stack and gradient overlay
-/// - Horizontal scrolling with ListView.builder
-/// - Vertical responsive grid with GridView.builder
-/// - Navigation to Search, Favourites, About, and Details screens
+/// - Three-level responsive breakpoints:
+///     * Mobile:  <= 600px (2 columns)
+///     * Tablet:  601px - 1024px (3-4 columns)
+///     * Desktop: > 1024px (5-6 columns, centered 1280px container, rich navigation)
+/// - Asynchronous TMDB REST API fetching
+/// - Stack layout with gradient overlays
+/// - ListView.builder & GridView.builder
 class HomeScreen extends StatefulWidget {
   static const String routeName = '/';
 
@@ -46,7 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadMovies();
   }
 
-  /// Fetches trending and popular movies from TMDB API / local sample service.
   Future<void> _loadMovies() async {
     setState(() {
       _isLoading = true;
@@ -77,17 +75,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth > 1024;
+
     return Scaffold(
       backgroundColor: AppTheme.background,
-      appBar: _buildAppBar(),
-      body: _buildBody(),
+      appBar: _buildAppBar(isDesktop),
+      body: _buildBody(screenWidth),
     );
   }
 
-  /// App bar featuring App name, icon, and quick action buttons.
-  AppBar _buildAppBar() {
+  AppBar _buildAppBar(bool isDesktop) {
     return AppBar(
       title: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             padding: const EdgeInsets.all(6),
@@ -101,27 +102,48 @@ class _HomeScreenState extends State<HomeScreen> {
           const Text('CINEMATE'),
         ],
       ),
-      actions: [
-        IconButton(
-          tooltip: 'Search',
-          icon: const Icon(Icons.search),
-          onPressed: () => Navigator.pushNamed(context, SearchScreen.routeName),
-        ),
-        IconButton(
-          tooltip: 'Favourites',
-          icon: const Icon(Icons.favorite, color: AppTheme.primaryAccent),
-          onPressed: () => Navigator.pushNamed(context, FavouritesScreen.routeName),
-        ),
-        IconButton(
-          tooltip: 'About',
-          icon: const Icon(Icons.info_outline),
-          onPressed: () => Navigator.pushNamed(context, AboutScreen.routeName),
-        ),
-      ],
+      actions: isDesktop
+          ? [
+              TextButton.icon(
+                icon: const Icon(Icons.search, color: AppTheme.primaryText, size: 18),
+                label: const Text('Search', style: TextStyle(color: AppTheme.primaryText)),
+                onPressed: () => Navigator.pushNamed(context, SearchScreen.routeName),
+              ),
+              const SizedBox(width: 8),
+              TextButton.icon(
+                icon: const Icon(Icons.favorite, color: AppTheme.primaryAccent, size: 18),
+                label: const Text('Favourites', style: TextStyle(color: AppTheme.primaryText)),
+                onPressed: () => Navigator.pushNamed(context, FavouritesScreen.routeName),
+              ),
+              const SizedBox(width: 8),
+              TextButton.icon(
+                icon: const Icon(Icons.info_outline, color: AppTheme.primaryText, size: 18),
+                label: const Text('About & Feedback', style: TextStyle(color: AppTheme.primaryText)),
+                onPressed: () => Navigator.pushNamed(context, AboutScreen.routeName),
+              ),
+              const SizedBox(width: 24),
+            ]
+          : [
+              IconButton(
+                tooltip: 'Search',
+                icon: const Icon(Icons.search),
+                onPressed: () => Navigator.pushNamed(context, SearchScreen.routeName),
+              ),
+              IconButton(
+                tooltip: 'Favourites',
+                icon: const Icon(Icons.favorite, color: AppTheme.primaryAccent),
+                onPressed: () => Navigator.pushNamed(context, FavouritesScreen.routeName),
+              ),
+              IconButton(
+                tooltip: 'About',
+                icon: const Icon(Icons.info_outline),
+                onPressed: () => Navigator.pushNamed(context, AboutScreen.routeName),
+              ),
+            ],
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(double screenWidth) {
     if (_isLoading) {
       return const Center(
         child: Column(
@@ -166,80 +188,118 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    final screenWidth = MediaQuery.of(context).size.width;
-    final crossAxisCount = screenWidth > 600 ? 3 : 2;
+    // 3-Level Responsive Layout Configuration
+    final int crossAxisCount;
+    final double horizontalPadding;
+    final double featuredHeight;
+    final double trendingListHeight;
+    final double cardWidth;
+    final double cardPosterHeight;
+
+    if (screenWidth > 1024) {
+      // Desktop (> 1024px)
+      crossAxisCount = screenWidth > 1400 ? 6 : 5;
+      horizontalPadding = 32.0;
+      featuredHeight = 360.0;
+      trendingListHeight = 300.0;
+      cardWidth = 175.0;
+      cardPosterHeight = 230.0;
+    } else if (screenWidth > 600) {
+      // Tablet (601px - 1024px)
+      crossAxisCount = screenWidth > 800 ? 4 : 3;
+      horizontalPadding = 20.0;
+      featuredHeight = 280.0;
+      trendingListHeight = 275.0;
+      cardWidth = 155.0;
+      cardPosterHeight = 210.0;
+    } else {
+      // Mobile (<= 600px)
+      crossAxisCount = 2;
+      horizontalPadding = 12.0;
+      featuredHeight = 220.0;
+      trendingListHeight = 265.0;
+      cardWidth = 145.0;
+      cardPosterHeight = 195.0;
+    }
 
     return RefreshIndicator(
       color: AppTheme.primaryAccent,
       backgroundColor: AppTheme.cardColor,
       onRefresh: _loadMovies,
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 1. Search Bar shortcut
-            _buildSearchShortcut(),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1280),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 1. Search Bar shortcut
+                _buildSearchShortcut(horizontalPadding),
 
-            // 2. Featured Movie Banner
-            if (_featuredMovie != null) _buildFeaturedSection(_featuredMovie!),
+                // 2. Featured Movie Banner
+                if (_featuredMovie != null)
+                  _buildFeaturedSection(_featuredMovie!, featuredHeight, horizontalPadding),
 
-            // 3. Trending Movies Section (Horizontal ListView)
-            const SectionTitle(title: 'Trending Movies'),
-            SizedBox(
-              height: 270,
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                scrollDirection: Axis.horizontal,
-                itemCount: _trendingMovies.length,
-                itemBuilder: (context, index) {
-                  final movie = _trendingMovies[index];
-                  return MovieCard(
-                    movie: movie,
-                    width: 145,
-                    posterHeight: 200,
-                    onTap: () => _openDetails(movie),
-                  );
-                },
-              ),
+                // 3. Trending Movies Section (Horizontal ListView)
+                const SectionTitle(title: 'Trending Movies'),
+                SizedBox(
+                  height: trendingListHeight,
+                  child: ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _trendingMovies.length,
+                    itemBuilder: (context, index) {
+                      final movie = _trendingMovies[index];
+                      return MovieCard(
+                        movie: movie,
+                        width: cardWidth,
+                        posterHeight: cardPosterHeight,
+                        onTap: () => _openDetails(movie),
+                      );
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                // 4. Popular Movies Section (Responsive Grid)
+                const SectionTitle(title: 'Popular Movies'),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                  child: GridView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      childAspectRatio: 0.65,
+                      crossAxisSpacing: 14,
+                      mainAxisSpacing: 18,
+                    ),
+                    itemCount: _popularMovies.length,
+                    itemBuilder: (context, index) {
+                      final movie = _popularMovies[index];
+                      return MovieCard(
+                        movie: movie,
+                        width: double.infinity,
+                        posterHeight: cardPosterHeight,
+                        onTap: () => _openDetails(movie),
+                      );
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 40),
+              ],
             ),
-
-            const SizedBox(height: 8),
-
-            // 4. Popular Movies Section (2-Column Grid)
-            const SectionTitle(title: 'Popular Movies'),
-            GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: crossAxisCount,
-                childAspectRatio: 0.65,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 16,
-              ),
-              itemCount: _popularMovies.length,
-              itemBuilder: (context, index) {
-                final movie = _popularMovies[index];
-                return MovieCard(
-                  movie: movie,
-                  width: double.infinity,
-                  posterHeight: 210,
-                  onTap: () => _openDetails(movie),
-                );
-              },
-            ),
-
-            const SizedBox(height: 32),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  /// Tappable search bar prompting users to open the search screen.
-  Widget _buildSearchShortcut() {
+  Widget _buildSearchShortcut(double horizontalPadding) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+      padding: EdgeInsets.fromLTRB(horizontalPadding, 8, horizontalPadding, 12),
       child: InkWell(
         onTap: () => Navigator.pushNamed(context, SearchScreen.routeName),
         borderRadius: BorderRadius.circular(12),
@@ -265,10 +325,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Featured movie banner displayed prominently at the top.
-  Widget _buildFeaturedSection(Movie movie) {
+  Widget _buildFeaturedSection(Movie movie, double height, double horizontalPadding) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 8.0),
       child: GestureDetector(
         onTap: () => _openDetails(movie),
         child: ClipRRect(
@@ -278,11 +337,10 @@ class _HomeScreenState extends State<HomeScreen> {
               MoviePoster(
                 imageUrl: movie.backdropUrl,
                 width: double.infinity,
-                height: 220,
+                height: height,
                 borderRadius: 16,
                 fit: BoxFit.cover,
               ),
-              // Dark gradient overlay for readable text
               Positioned.fill(
                 child: DecoratedBox(
                   decoration: BoxDecoration(
@@ -291,89 +349,98 @@ class _HomeScreenState extends State<HomeScreen> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.85),
+                        Colors.black.withValues(alpha: 0.9),
                       ],
+                      stops: const [0.3, 1.0],
                     ),
                   ),
                 ),
               ),
-              // Featured text & action button
               Positioned(
-                bottom: 16,
-                left: 16,
-                right: 16,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                bottom: 20,
+                left: 20,
+                right: 20,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppTheme.primaryAccent,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text(
-                        'FEATURED TODAY',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      movie.title,
-                      style: const TextStyle(
-                        color: AppTheme.primaryText,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Icon(Icons.star_rounded, color: AppTheme.starRatingColor, size: 16),
-                        const SizedBox(width: 4),
-                        Text(
-                          movie.voteAverage.toStringAsFixed(1),
-                          style: const TextStyle(
-                            color: AppTheme.primaryText,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryAccent,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Text(
+                              'FEATURED TODAY',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          movie.releaseYear,
-                          style: const TextStyle(
-                            color: AppTheme.secondaryText,
-                            fontSize: 12,
+                          const SizedBox(height: 8),
+                          Text(
+                            movie.title,
+                            style: const TextStyle(
+                              color: AppTheme.primaryText,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        const Spacer(),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Row(
+                          const SizedBox(height: 6),
+                          Row(
                             children: [
+                              const Icon(Icons.star_rounded, color: AppTheme.starRatingColor, size: 18),
+                              const SizedBox(width: 4),
                               Text(
-                                'View',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
+                                movie.voteAverage.toStringAsFixed(1),
+                                style: const TextStyle(
+                                  color: AppTheme.primaryText,
+                                  fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(width: 4),
-                              Icon(Icons.arrow_forward_ios, size: 10, color: Colors.white),
+                              const SizedBox(width: 14),
+                              Text(
+                                movie.releaseYear,
+                                style: const TextStyle(
+                                  color: AppTheme.secondaryText,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              const SizedBox(width: 14),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.cardColor,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  movie.genre,
+                                  style: const TextStyle(
+                                    color: AppTheme.secondaryText,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: () => _openDetails(movie),
+                      icon: const Icon(Icons.play_arrow_rounded, size: 20),
+                      label: const Text('View Details'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryAccent,
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                      ),
                     ),
                   ],
                 ),

@@ -4,6 +4,7 @@
 /// This file provides beginner-friendly, executable examples of fundamental Dart
 /// concepts commonly examined in college viva / practical assessments.
 /// ============================================================================
+library dart_basics;
 
 void main() {
   print('--- 1. Variables and Data Types ---');

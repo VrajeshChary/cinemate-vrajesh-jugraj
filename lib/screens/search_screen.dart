@@ -5,14 +5,12 @@ import '../theme/app_theme.dart';
 import '../widgets/movie_card.dart';
 import 'movie_details_screen.dart';
 
-/// SearchScreen allows users to search movies by title in real-time.
+/// SearchScreen with 3-Level Responsive Design.
 /// 
 /// Demonstrates:
-/// - StatefulWidget
-/// - setState for managing search state, query, and result lists
-/// - TextEditingController
-/// - GridView.builder with responsive column count
-/// - Handling loading, empty, and result states
+/// - Breakpoints: Mobile (2 cols), Tablet (3-4 cols), Desktop (5-6 cols)
+/// - Constrained centered layout for wide screens
+/// - Live TMDB search with loading, empty, and populated states
 class SearchScreen extends StatefulWidget {
   static const String routeName = '/search';
 
@@ -48,10 +46,12 @@ class _SearchScreenState extends State<SearchScreen> {
 
     final results = await _movieService.searchMovies(trimmed);
 
-    setState(() {
-      _searchResults = results;
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _searchResults = results;
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -63,8 +63,20 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    // Responsive column count: 2 on mobile phones, 3+ on tablets/wider screens
-    final crossAxisCount = screenWidth > 600 ? 3 : 2;
+
+    // 3-Level Responsive Breakpoints
+    final int crossAxisCount;
+    final double horizontalPadding;
+    if (screenWidth > 1024) {
+      crossAxisCount = screenWidth > 1400 ? 6 : 5;
+      horizontalPadding = 32.0;
+    } else if (screenWidth > 600) {
+      crossAxisCount = screenWidth > 800 ? 4 : 3;
+      horizontalPadding = 20.0;
+    } else {
+      crossAxisCount = 2;
+      horizontalPadding = 12.0;
+    }
 
     return Scaffold(
       backgroundColor: AppTheme.background,
@@ -75,48 +87,53 @@ class _SearchScreenState extends State<SearchScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: Column(
-        children: [
-          // Search Input Field
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _searchController,
-              autofocus: true,
-              style: const TextStyle(color: AppTheme.primaryText),
-              textInputAction: TextInputAction.search,
-              onSubmitted: _performSearch,
-              onChanged: (val) {
-                if (val.isEmpty) {
-                  _performSearch('');
-                }
-              },
-              decoration: InputDecoration(
-                hintText: 'Search by movie title (e.g. Interstellar)...',
-                prefixIcon: const Icon(Icons.search, color: AppTheme.secondaryText),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear, color: AppTheme.secondaryText),
-                        onPressed: () {
-                          _searchController.clear();
-                          _performSearch('');
-                        },
-                      )
-                    : null,
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1280),
+          child: Column(
+            children: [
+              // Search Input Field
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16.0),
+                child: TextField(
+                  controller: _searchController,
+                  autofocus: true,
+                  style: const TextStyle(color: AppTheme.primaryText),
+                  textInputAction: TextInputAction.search,
+                  onSubmitted: _performSearch,
+                  onChanged: (val) {
+                    if (val.isEmpty) {
+                      _performSearch('');
+                    }
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Search by movie title (e.g. Inception, Batman)...',
+                    prefixIcon: const Icon(Icons.search, color: AppTheme.secondaryText),
+                    suffixIcon: _searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, color: AppTheme.secondaryText),
+                            onPressed: () {
+                              _searchController.clear();
+                              _performSearch('');
+                            },
+                          )
+                        : null,
+                  ),
+                ),
               ),
-            ),
-          ),
 
-          // Content Area
-          Expanded(
-            child: _buildBody(crossAxisCount),
+              // Content Area
+              Expanded(
+                child: _buildBody(crossAxisCount, horizontalPadding),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildBody(int crossAxisCount) {
+  Widget _buildBody(int crossAxisCount, double horizontalPadding) {
     if (_isLoading) {
       return const Center(
         child: CircularProgressIndicator(
@@ -164,12 +181,12 @@ class _SearchScreenState extends State<SearchScreen> {
     }
 
     return GridView.builder(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
         childAspectRatio: 0.65,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 16,
+        crossAxisSpacing: 14,
+        mainAxisSpacing: 18,
       ),
       itemCount: _searchResults.length,
       itemBuilder: (context, index) {
