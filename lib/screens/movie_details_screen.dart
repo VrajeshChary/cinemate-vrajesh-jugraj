@@ -80,28 +80,38 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     );
   }
 
-  /// Desktop Side-by-Side Theatrical Layout (> 1024px)
+  /// Desktop / Laptop Side-by-Side Theatrical Layout (> 1024px)
   Widget _buildDesktopLayout(FavouritesProvider favouritesProvider, bool isFav) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWidescreen = screenWidth > 1440;
+    final posterWidth = isWidescreen ? 340.0 : 280.0;
+    final posterHeight = isWidescreen ? 480.0 : 400.0;
+    final gapWidth = isWidescreen ? 48.0 : 32.0;
+    final maxConstraint = isWidescreen ? 1200.0 : 1050.0;
+
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1100),
+        constraints: BoxConstraints(maxWidth: maxConstraint),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+          padding: EdgeInsets.symmetric(
+            horizontal: isWidescreen ? 32 : 24,
+            vertical: isWidescreen ? 40 : 24,
+          ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Left Column: Large Movie Poster
+              // Left Column: Movie Poster
               Hero(
                 tag: 'movie-poster-${_movie.id}',
                 child: MoviePoster(
                   imageUrl: _movie.posterUrl,
-                  width: 340,
-                  height: 480,
+                  width: posterWidth,
+                  height: posterHeight,
                   borderRadius: 16,
                   fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(width: 48),
+              SizedBox(width: gapWidth),
 
               // Right Column: Details & Information
               Expanded(
@@ -112,7 +122,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                       _movie.title,
                       style: TextStyle(
                         color: AppTheme.getTextColor(context),
-                        fontSize: 34,
+                        fontSize: isWidescreen ? 34 : 28,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
                       ),

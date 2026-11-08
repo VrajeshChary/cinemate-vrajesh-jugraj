@@ -22,18 +22,27 @@ class FavouritesScreen extends StatelessWidget {
     final favourites = favouritesProvider.favourites;
     final screenWidth = MediaQuery.of(context).size.width;
 
-    // 3-Level Responsive Breakpoints
+    // 4-Level Responsive Breakpoints (Mobile, Tablet, Laptop, Desktop)
     final int crossAxisCount;
     final double horizontalPadding;
-    if (screenWidth > 1024) {
-      crossAxisCount = screenWidth > 1400 ? 6 : 5;
-      horizontalPadding = 32.0;
+    final double maxContentWidth;
+
+    if (screenWidth > 1440) {
+      crossAxisCount = 6;
+      horizontalPadding = 36.0;
+      maxContentWidth = 1400.0;
+    } else if (screenWidth > 1024) {
+      crossAxisCount = screenWidth > 1200 ? 5 : 4;
+      horizontalPadding = 28.0;
+      maxContentWidth = 1240.0;
     } else if (screenWidth > 600) {
       crossAxisCount = screenWidth > 800 ? 4 : 3;
       horizontalPadding = 20.0;
+      maxContentWidth = 960.0;
     } else {
       crossAxisCount = 2;
       horizontalPadding = 12.0;
+      maxContentWidth = double.infinity;
     }
 
     return Scaffold(
@@ -47,7 +56,7 @@ class FavouritesScreen extends StatelessWidget {
       ),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1280),
+          constraints: BoxConstraints(maxWidth: maxContentWidth),
           child: favourites.isEmpty
               ? Center(
                   child: Padding(

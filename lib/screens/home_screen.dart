@@ -12,13 +12,14 @@ import 'favourites_screen.dart';
 import 'movie_details_screen.dart';
 import 'search_screen.dart';
 
-/// HomeScreen with 3-Level Responsive Design (Mobile, Tablet, Desktop).
+/// HomeScreen with Multi-Device Responsive Design (Mobile, Tablet, Laptop, Desktop).
 /// 
 /// Demonstrates:
-/// - Three-level responsive breakpoints:
+/// - Four-level responsive breakpoints:
 ///     * Mobile:  <= 600px (2 columns)
 ///     * Tablet:  601px - 1024px (3-4 columns)
-///     * Desktop: > 1024px (5-6 columns, centered 1280px container, rich navigation)
+///     * Laptop:  1025px - 1440px (4-5 columns, tailored 1240px container)
+///     * Desktop: > 1440px (6 columns, widescreen 1440px container)
 /// - Interactive Theme Toggle (Light & Dark) in top AppBar
 /// - Asynchronous TMDB REST API fetching
 /// - Stack layout with gradient overlays
@@ -206,38 +207,51 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    // 3-Level Responsive Layout Configuration
+    // 4-Level Responsive Layout Configuration (Mobile, Tablet, Laptop, Desktop)
     final int crossAxisCount;
     final double horizontalPadding;
     final double featuredHeight;
     final double trendingListHeight;
     final double cardWidth;
     final double cardPosterHeight;
+    final double maxContentWidth;
 
-    if (screenWidth > 1024) {
-      // Desktop (> 1024px)
-      crossAxisCount = screenWidth > 1400 ? 6 : 5;
-      horizontalPadding = 32.0;
-      featuredHeight = 360.0;
-      trendingListHeight = 300.0;
-      cardWidth = 175.0;
-      cardPosterHeight = 230.0;
+    if (screenWidth > 1440) {
+      // 1. Large Desktop / Monitor (> 1440px)
+      crossAxisCount = 6;
+      horizontalPadding = 36.0;
+      featuredHeight = 380.0;
+      trendingListHeight = 310.0;
+      cardWidth = 180.0;
+      cardPosterHeight = 240.0;
+      maxContentWidth = 1400.0;
+    } else if (screenWidth > 1024) {
+      // 2. Laptop (1025px - 1440px: 1280x800, 1366x768, 1440x900)
+      crossAxisCount = screenWidth > 1200 ? 5 : 4;
+      horizontalPadding = 28.0;
+      featuredHeight = 330.0;
+      trendingListHeight = 290.0;
+      cardWidth = 165.0;
+      cardPosterHeight = 220.0;
+      maxContentWidth = 1240.0;
     } else if (screenWidth > 600) {
-      // Tablet (601px - 1024px)
+      // 3. Tablet (601px - 1024px)
       crossAxisCount = screenWidth > 800 ? 4 : 3;
       horizontalPadding = 20.0;
       featuredHeight = 280.0;
       trendingListHeight = 275.0;
       cardWidth = 155.0;
       cardPosterHeight = 210.0;
+      maxContentWidth = 960.0;
     } else {
-      // Mobile (<= 600px)
+      // 4. Mobile (<= 600px)
       crossAxisCount = 2;
       horizontalPadding = 12.0;
       featuredHeight = 220.0;
       trendingListHeight = 265.0;
       cardWidth = 145.0;
       cardPosterHeight = 195.0;
+      maxContentWidth = double.infinity;
     }
 
     return RefreshIndicator(
@@ -246,7 +260,7 @@ class _HomeScreenState extends State<HomeScreen> {
       onRefresh: _loadMovies,
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1280),
+          constraints: BoxConstraints(maxWidth: maxContentWidth),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

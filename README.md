@@ -1,17 +1,38 @@
 # CINEMATE 🎬
 > A Simple, Beautiful Movie Discovery Application built with Flutter & Dart.
 
-CINEMATE is a modern, responsive movie discovery application featuring an adaptive design with a **Light Theme default** and an **instant Dark Cinematic Theme toggle** on top. Designed specifically as an academic showcase, it maintains clean, beginner-friendly code while delivering a polished UI/UX experience across Mobile, Tablet, and Desktop web environments.
+CINEMATE is a modern, responsive movie discovery application featuring an adaptive design with a **Light Theme default** and an **instant Dark Cinematic Theme toggle** on top. Designed specifically as an academic showcase, it maintains clean, beginner-friendly code while delivering a polished UI/UX experience across Mobile, Tablet, Laptop, and Desktop web environments.
+
+---
+
+## 📸 Application Screenshots
+
+Actual high-resolution screenshots captured across all device viewports:
+
+### 1. Multi-Device Responsive Layouts (Mobile, Tablet, Laptop, Desktop)
+
+| Desktop (> 1440px) | Laptop (1025px - 1440px) | Tablet (601px - 1024px) | Mobile (360px - 600px) |
+|:---:|:---:|:---:|:---:|
+| ![Desktop View](screenshots/desktop_layout.png) | ![Laptop View](screenshots/laptop_layout.png) | ![Tablet View](screenshots/tablet_layout.png) | ![Mobile View](screenshots/mobile_layout.png) |
+| *6 Column Widescreen Grid* | *4-5 Column Tailored Laptop Grid* | *3-4 Column Tablet Grid* | *2 Column Mobile Grid* |
+
+### 2. Core Application Screens
+
+| Movie Details Screen | Real-Time Search Screen | Curated Favourites Screen | About & Architecture Screen |
+|:---:|:---:|:---:|:---:|
+| ![Movie Details](screenshots/movie_details_screen.png) | ![Search Screen](screenshots/search_screen.png) | ![Favourites Screen](screenshots/favourites_screen.png) | ![About Screen](screenshots/about_screen.png) |
+| *Theatrical Split View with Live Metadata* | *Real-Time TMDB Search* | *Curated Favourites Grid* | *Academic Project Architecture* |
 
 ---
 
 ## 🌟 Key Features
 
 1. **Light & Dark Themes (Light Default)**: Crisp, clean light theme by default (`#F6F7F9` background, white cards, dark typography) with an interactive top AppBar toggle button to switch seamlessly to the Netflix-inspired dark cinematic theme (`#101014` background, `#22222B` cards, `#E50914` accents).
-2. **Three-Level Responsive Design**:
+2. **Four-Level Responsive Design**:
    - **Mobile (360px–600px)**: 2-column movie grid, compact header icons, stacked details view.
    - **Tablet (601px–1024px)**: 3 to 4-column movie grid, larger banner, optimized touch targets.
-   - **Desktop (> 1024px)**: 5 to 6-column grid, max 1280px centered viewport, split-view theatrical details layout, and labeled top navigation.
+   - **Laptop (1025px–1440px)**: 4 to 5-column grid, tailored 1240px container, optimized theatrical split view for standard 1366x768 and 1280x800 laptop screens.
+   - **Large Desktop (> 1440px)**: 6-column widescreen grid, max 1400px centered viewport, full theatrical details layout.
 3. **Seamless Grid Layout**: Movie cards automatically fill their grid cells proportionally without any awkward vertical gaps.
 4. **Featured Movie Banner**: Highlighting today's top blockbuster with high-resolution poster backdrop, rating badge, and action button.
 5. **Trending & Popular Sections**: 
