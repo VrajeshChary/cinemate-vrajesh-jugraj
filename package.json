@@ -1,0 +1,9 @@
+{
+  "name": "cinemate",
+  "version": "1.0.0",
+  "description": "CINEMATE - A Simple and Beautiful Movie Discovery App built with Flutter",
+  "private": true,
+  "scripts": {
+    "build": "bash vercel-build.sh"
+  }
+}

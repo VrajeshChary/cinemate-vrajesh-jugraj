@@ -1,0 +1,18 @@
+{
+  "name": "CINEMATE",
+  "short_name": "CINEMATE",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#101014",
+  "theme_color": "#E50914",
+  "description": "A Simple, Beautiful Movie Discovery Application built with Flutter & Dart.",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
