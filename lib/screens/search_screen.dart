@@ -79,7 +79,7 @@ class _SearchScreenState extends State<SearchScreen> {
     }
 
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Search Movies'),
         leading: IconButton(
@@ -98,7 +98,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 child: TextField(
                   controller: _searchController,
                   autofocus: true,
-                  style: const TextStyle(color: AppTheme.primaryText),
+                  style: TextStyle(color: AppTheme.getTextColor(context)),
                   textInputAction: TextInputAction.search,
                   onSubmitted: _performSearch,
                   onChanged: (val) {
@@ -108,10 +108,10 @@ class _SearchScreenState extends State<SearchScreen> {
                   },
                   decoration: InputDecoration(
                     hintText: 'Search by movie title (e.g. Inception, Batman)...',
-                    prefixIcon: const Icon(Icons.search, color: AppTheme.secondaryText),
+                    prefixIcon: Icon(Icons.search, color: AppTheme.getSecondaryTextColor(context)),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear, color: AppTheme.secondaryText),
+                            icon: Icon(Icons.clear, color: AppTheme.getSecondaryTextColor(context)),
                             onPressed: () {
                               _searchController.clear();
                               _performSearch('');
@@ -143,15 +143,15 @@ class _SearchScreenState extends State<SearchScreen> {
     }
 
     if (!_hasSearched) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search, size: 64, color: AppTheme.cardColor),
-            SizedBox(height: 12),
+            Icon(Icons.search, size: 64, color: AppTheme.getBorder(context)),
+            const SizedBox(height: 12),
             Text(
               'Search your favourite movies',
-              style: TextStyle(color: AppTheme.secondaryText, fontSize: 16),
+              style: TextStyle(color: AppTheme.getSecondaryTextColor(context), fontSize: 16),
             ),
           ],
         ),
@@ -163,17 +163,17 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.movie_filter_outlined, size: 64, color: AppTheme.secondaryText),
+            Icon(Icons.movie_filter_outlined, size: 64, color: AppTheme.getSecondaryTextColor(context)),
             const SizedBox(height: 12),
             Text(
               'No movies found matching "${_searchController.text}"',
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppTheme.secondaryText, fontSize: 16),
+              style: TextStyle(color: AppTheme.getSecondaryTextColor(context), fontSize: 16),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Try searching with a different keyword',
-              style: TextStyle(color: AppTheme.secondaryText, fontSize: 13),
+              style: TextStyle(color: AppTheme.getSecondaryTextColor(context), fontSize: 13),
             ),
           ],
         ),

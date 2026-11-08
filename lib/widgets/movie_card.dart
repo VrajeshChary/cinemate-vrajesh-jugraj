@@ -65,8 +65,8 @@ class MovieCard extends StatelessWidget {
               movie.title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: AppTheme.primaryText,
+              style: TextStyle(
+                color: AppTheme.getTextColor(context),
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -79,8 +79,8 @@ class MovieCard extends StatelessWidget {
               children: [
                 Text(
                   movie.releaseYear,
-                  style: const TextStyle(
-                    color: AppTheme.secondaryText,
+                  style: TextStyle(
+                    color: AppTheme.getSecondaryTextColor(context),
                     fontSize: 12,
                   ),
                 ),
@@ -94,8 +94,8 @@ class MovieCard extends StatelessWidget {
                     const SizedBox(width: 2),
                     Text(
                       movie.voteAverage.toStringAsFixed(1),
-                      style: const TextStyle(
-                        color: AppTheme.primaryText,
+                      style: TextStyle(
+                        color: AppTheme.getTextColor(context),
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),

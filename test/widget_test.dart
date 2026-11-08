@@ -6,6 +6,7 @@ import 'package:cinema/main.dart';
 import 'package:cinema/models/movie.dart';
 import 'package:cinema/screens/movie_details_screen.dart';
 import 'package:cinema/services/favourites_provider.dart';
+import 'package:cinema/services/theme_provider.dart';
 import 'package:cinema/widgets/movie_card.dart';
 
 void main() {
@@ -21,10 +22,13 @@ void main() {
   );
 
   testWidgets('1. Test that the CINEMATE app renders and displays application name', (WidgetTester tester) async {
-    // Build our app and trigger a frame
+    // Build our app with providers and trigger a frame
     await tester.pumpWidget(
-      ChangeNotifierProvider(
-        create: (context) => FavouritesProvider(),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => FavouritesProvider()),
+          ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ],
         child: const CinemateApp(),
       ),
     );

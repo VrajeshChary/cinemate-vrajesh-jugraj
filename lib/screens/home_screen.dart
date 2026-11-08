@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/movie.dart';
 import '../services/movie_service.dart';
+import '../services/theme_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/movie_card.dart';
 import '../widgets/movie_poster.dart';
@@ -17,6 +19,7 @@ import 'search_screen.dart';
 ///     * Mobile:  <= 600px (2 columns)
 ///     * Tablet:  601px - 1024px (3-4 columns)
 ///     * Desktop: > 1024px (5-6 columns, centered 1280px container, rich navigation)
+/// - Interactive Theme Toggle (Light & Dark) in top AppBar
 /// - Asynchronous TMDB REST API fetching
 /// - Stack layout with gradient overlays
 /// - ListView.builder & GridView.builder
@@ -79,13 +82,25 @@ class _HomeScreenState extends State<HomeScreen> {
     final isDesktop = screenWidth > 1024;
 
     return Scaffold(
-      backgroundColor: AppTheme.background,
-      appBar: _buildAppBar(isDesktop),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: _buildAppBar(context, isDesktop),
       body: _buildBody(screenWidth),
     );
   }
 
-  AppBar _buildAppBar(bool isDesktop) {
+  AppBar _buildAppBar(BuildContext context, bool isDesktop) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+
+    final themeToggleBtn = IconButton(
+      tooltip: isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode',
+      icon: Icon(
+        isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+        color: isDark ? Colors.amber : AppTheme.getTextColor(context),
+      ),
+      onPressed: () => themeProvider.toggleTheme(),
+    );
+
     return AppBar(
       title: Row(
         mainAxisSize: MainAxisSize.min,
@@ -105,25 +120,28 @@ class _HomeScreenState extends State<HomeScreen> {
       actions: isDesktop
           ? [
               TextButton.icon(
-                icon: const Icon(Icons.search, color: AppTheme.primaryText, size: 18),
-                label: const Text('Search', style: TextStyle(color: AppTheme.primaryText)),
+                icon: Icon(Icons.search, color: AppTheme.getTextColor(context), size: 18),
+                label: Text('Search', style: TextStyle(color: AppTheme.getTextColor(context))),
                 onPressed: () => Navigator.pushNamed(context, SearchScreen.routeName),
               ),
               const SizedBox(width: 8),
               TextButton.icon(
                 icon: const Icon(Icons.favorite, color: AppTheme.primaryAccent, size: 18),
-                label: const Text('Favourites', style: TextStyle(color: AppTheme.primaryText)),
+                label: Text('Favourites', style: TextStyle(color: AppTheme.getTextColor(context))),
                 onPressed: () => Navigator.pushNamed(context, FavouritesScreen.routeName),
               ),
               const SizedBox(width: 8),
               TextButton.icon(
-                icon: const Icon(Icons.info_outline, color: AppTheme.primaryText, size: 18),
-                label: const Text('About', style: TextStyle(color: AppTheme.primaryText)),
+                icon: Icon(Icons.info_outline, color: AppTheme.getTextColor(context), size: 18),
+                label: Text('About', style: TextStyle(color: AppTheme.getTextColor(context))),
                 onPressed: () => Navigator.pushNamed(context, AboutScreen.routeName),
               ),
-              const SizedBox(width: 24),
+              const SizedBox(width: 8),
+              themeToggleBtn,
+              const SizedBox(width: 16),
             ]
           : [
+              themeToggleBtn,
               IconButton(
                 tooltip: 'Search',
                 icon: const Icon(Icons.search),
@@ -145,17 +163,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildBody(double screenWidth) {
     if (_isLoading) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(
+            const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryAccent),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               'Loading CINEMATE...',
-              style: TextStyle(color: AppTheme.secondaryText, fontSize: 14),
+              style: TextStyle(color: AppTheme.getSecondaryTextColor(context), fontSize: 14),
             ),
           ],
         ),
@@ -169,12 +187,12 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.cloud_off, size: 64, color: AppTheme.secondaryText),
+              Icon(Icons.cloud_off, size: 64, color: AppTheme.getSecondaryTextColor(context)),
               const SizedBox(height: 16),
               Text(
                 _errorMessage!,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: AppTheme.secondaryText, fontSize: 16),
+                style: TextStyle(color: AppTheme.getSecondaryTextColor(context), fontSize: 16),
               ),
               const SizedBox(height: 16),
               ElevatedButton.icon(
@@ -224,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return RefreshIndicator(
       color: AppTheme.primaryAccent,
-      backgroundColor: AppTheme.cardColor,
+      backgroundColor: AppTheme.getCardColor(context),
       onRefresh: _loadMovies,
       child: Center(
         child: ConstrainedBox(
@@ -305,17 +323,17 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: AppTheme.secondaryBackground,
+            color: AppTheme.getSecondaryBg(context),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppTheme.cardColor),
+            border: Border.all(color: AppTheme.getBorder(context)),
           ),
-          child: const Row(
+          child: Row(
             children: [
-              Icon(Icons.search, color: AppTheme.secondaryText, size: 20),
-              SizedBox(width: 12),
+              Icon(Icons.search, color: AppTheme.getSecondaryTextColor(context), size: 20),
+              const SizedBox(width: 12),
               Text(
                 'Search movies by title...',
-                style: TextStyle(color: AppTheme.secondaryText, fontSize: 14),
+                style: TextStyle(color: AppTheme.getSecondaryTextColor(context), fontSize: 14),
               ),
             ],
           ),

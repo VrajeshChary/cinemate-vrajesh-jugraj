@@ -54,7 +54,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     final isFav = favouritesProvider.isFavourite(_movie);
 
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: isDesktop
           ? AppBar(
               title: Text(_movie.title),
@@ -66,7 +66,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                 IconButton(
                   icon: Icon(
                     isFav ? Icons.favorite : Icons.favorite_border,
-                    color: isFav ? AppTheme.primaryAccent : AppTheme.primaryText,
+                    color: isFav ? AppTheme.primaryAccent : AppTheme.getTextColor(context),
                   ),
                   onPressed: () => _toggleFav(favouritesProvider, isFav),
                 ),
@@ -110,8 +110,8 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                   children: [
                     Text(
                       _movie.title,
-                      style: const TextStyle(
-                        color: AppTheme.primaryText,
+                      style: TextStyle(
+                        color: AppTheme.getTextColor(context),
                         fontSize: 34,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
@@ -129,14 +129,14 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color: AppTheme.secondaryBackground,
+                            color: AppTheme.getSecondaryBg(context),
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: AppTheme.cardColor),
+                            border: Border.all(color: AppTheme.getBorder(context)),
                           ),
                           child: Text(
                             _movie.genre,
-                            style: const TextStyle(
-                              color: AppTheme.secondaryText,
+                            style: TextStyle(
+                              color: AppTheme.getSecondaryTextColor(context),
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                             ),
@@ -146,10 +146,10 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                     ),
                     const SizedBox(height: 28),
 
-                    const Text(
+                    Text(
                       'Storyline',
                       style: TextStyle(
-                        color: AppTheme.primaryText,
+                        color: AppTheme.getTextColor(context),
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -157,8 +157,8 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                     const SizedBox(height: 12),
                     Text(
                       _movie.overview,
-                      style: const TextStyle(
-                        color: AppTheme.secondaryText,
+                      style: TextStyle(
+                        color: AppTheme.getSecondaryTextColor(context),
                         fontSize: 16,
                         height: 1.7,
                       ),
@@ -176,17 +176,18 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                           ),
                           label: Text(isFav ? 'In Favourites' : 'Add to Favourites'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: isFav ? AppTheme.cardColor : AppTheme.primaryAccent,
+                            backgroundColor: isFav ? AppTheme.getCardColor(context) : AppTheme.primaryAccent,
+                            foregroundColor: isFav ? AppTheme.getTextColor(context) : Colors.white,
                             padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
                           ),
                         ),
                         const SizedBox(width: 16),
                         OutlinedButton.icon(
                           onPressed: () => Navigator.of(context).pop(),
-                          icon: const Icon(Icons.arrow_back, color: AppTheme.primaryText),
-                          label: const Text('Back to Movies', style: TextStyle(color: AppTheme.primaryText)),
+                          icon: Icon(Icons.arrow_back, color: AppTheme.getTextColor(context)),
+                          label: Text('Back to Movies', style: TextStyle(color: AppTheme.getTextColor(context))),
                           style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: AppTheme.cardColor, width: 1.5),
+                            side: BorderSide(color: AppTheme.getBorder(context), width: 1.5),
                             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                           ),
@@ -207,6 +208,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
   Widget _buildMobileTabletLayout(BuildContext context, FavouritesProvider favouritesProvider, bool isFav) {
     final size = MediaQuery.of(context).size;
     final isTablet = size.width > 600;
+    final bgColor = Theme.of(context).scaffoldBackgroundColor;
 
     return SingleChildScrollView(
       child: Column(
@@ -233,8 +235,8 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                       colors: [
                         Colors.black.withValues(alpha: 0.6),
                         Colors.transparent,
-                        AppTheme.background.withValues(alpha: 0.8),
-                        AppTheme.background,
+                        bgColor.withValues(alpha: 0.8),
+                        bgColor,
                       ],
                       stops: const [0.0, 0.4, 0.8, 1.0],
                     ),
@@ -249,18 +251,18 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CircleAvatar(
-                      backgroundColor: AppTheme.cardColor.withValues(alpha: 0.8),
+                      backgroundColor: AppTheme.getCardColor(context).withValues(alpha: 0.85),
                       child: IconButton(
-                        icon: const Icon(Icons.arrow_back, color: AppTheme.primaryText),
+                        icon: Icon(Icons.arrow_back, color: AppTheme.getTextColor(context)),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ),
                     CircleAvatar(
-                      backgroundColor: AppTheme.cardColor.withValues(alpha: 0.8),
+                      backgroundColor: AppTheme.getCardColor(context).withValues(alpha: 0.85),
                       child: IconButton(
                         icon: Icon(
                           isFav ? Icons.favorite : Icons.favorite_border,
-                          color: isFav ? AppTheme.primaryAccent : AppTheme.primaryText,
+                          color: isFav ? AppTheme.primaryAccent : AppTheme.getTextColor(context),
                         ),
                         onPressed: () => _toggleFav(favouritesProvider, isFav),
                       ),
@@ -278,7 +280,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                 Text(
                   _movie.title,
                   style: TextStyle(
-                    color: AppTheme.primaryText,
+                    color: AppTheme.getTextColor(context),
                     fontSize: isTablet ? 30 : 26,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.5,
@@ -295,14 +297,14 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: AppTheme.secondaryBackground,
+                        color: AppTheme.getSecondaryBg(context),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: AppTheme.cardColor),
+                        border: Border.all(color: AppTheme.getBorder(context)),
                       ),
                       child: Text(
                         _movie.genre,
-                        style: const TextStyle(
-                          color: AppTheme.secondaryText,
+                        style: TextStyle(
+                          color: AppTheme.getSecondaryTextColor(context),
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                         ),
@@ -311,10 +313,10 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                   ],
                 ),
                 const SizedBox(height: 24),
-                const Text(
+                Text(
                   'Storyline',
                   style: TextStyle(
-                    color: AppTheme.primaryText,
+                    color: AppTheme.getTextColor(context),
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -322,8 +324,8 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                 const SizedBox(height: 8),
                 Text(
                   _movie.overview,
-                  style: const TextStyle(
-                    color: AppTheme.secondaryText,
+                  style: TextStyle(
+                    color: AppTheme.getSecondaryTextColor(context),
                     fontSize: 15,
                     height: 1.6,
                   ),
@@ -336,11 +338,12 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                     onPressed: () => _toggleFav(favouritesProvider, isFav),
                     icon: Icon(
                       isFav ? Icons.favorite : Icons.favorite_border,
-                      color: AppTheme.primaryText,
+                      color: Colors.white,
                     ),
                     label: Text(isFav ? 'Remove from Favourites' : 'Add to Favourites'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: isFav ? AppTheme.cardColor : AppTheme.primaryAccent,
+                      backgroundColor: isFav ? AppTheme.getCardColor(context) : AppTheme.primaryAccent,
+                      foregroundColor: isFav ? AppTheme.getTextColor(context) : Colors.white,
                     ),
                   ),
                 ),
@@ -363,7 +366,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
               : 'Added "${_movie.title}" to favourites',
         ),
         duration: const Duration(seconds: 1),
-        backgroundColor: AppTheme.cardColor,
+        backgroundColor: AppTheme.getCardColor(context),
       ),
     );
   }
@@ -372,18 +375,19 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: AppTheme.cardColor,
+        color: AppTheme.getCardColor(context),
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppTheme.getBorder(context)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: AppTheme.secondaryText),
+          Icon(icon, size: 14, color: AppTheme.getSecondaryTextColor(context)),
           const SizedBox(width: 6),
           Text(
             label,
-            style: const TextStyle(
-              color: AppTheme.primaryText,
+            style: TextStyle(
+              color: AppTheme.getTextColor(context),
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
@@ -397,8 +401,9 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: AppTheme.cardColor,
+        color: AppTheme.getCardColor(context),
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppTheme.getBorder(context)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -407,8 +412,8 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
           const SizedBox(width: 4),
           Text(
             rating.toStringAsFixed(1),
-            style: const TextStyle(
-              color: AppTheme.primaryText,
+            style: TextStyle(
+              color: AppTheme.getTextColor(context),
               fontSize: 12,
               fontWeight: FontWeight.bold,
             ),

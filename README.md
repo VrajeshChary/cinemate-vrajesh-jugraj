@@ -1,45 +1,25 @@
 # CINEMATE 🎬
 > A Simple, Beautiful Movie Discovery Application built with Flutter & Dart.
 
-CINEMATE is a modern, responsive movie discovery application featuring a dark cinematic theme inspired by Netflix. Designed specifically as an academic showcase, it maintains clean, beginner-friendly code while delivering a polished UI/UX experience across Mobile, Tablet, and Desktop web environments.
-
----
-
-## 📸 Application Screenshots
-
-Actual high-resolution screenshots captured from the running application:
-
-### 1. Three-Level Responsive Layouts
-
-| Desktop Layout (> 1024px) | Tablet Layout (601px - 1024px) | Mobile Layout (360px - 600px) |
-|:---:|:---:|:---:|
-| ![Desktop View](screenshots/desktop_layout.png) | ![Tablet View](screenshots/tablet_layout.png) | ![Mobile View](screenshots/mobile_layout.png) |
-| *5-6 Column Grid & Theatrical Navigation* | *3-4 Column Grid with Balanced Spacing* | *2 Column Grid with Compact Header* |
-
-### 2. Core Application Screens
-
-| Movie Details Screen | Real-Time Search Screen | About & Feedback Form |
-|:---:|:---:|:---:|
-| ![Movie Details](screenshots/movie_details_screen.png) | ![Search Screen](screenshots/search_screen.png) | ![About Screen](screenshots/about_screen.png) |
-| *Theatrical Split View with Live Metadata* | *Live TMDB Title Search with Grid Results* | *Input Validation (Name, Email & Feedback)* |
+CINEMATE is a modern, responsive movie discovery application featuring an adaptive design with a **Light Theme default** and an **instant Dark Cinematic Theme toggle** on top. Designed specifically as an academic showcase, it maintains clean, beginner-friendly code while delivering a polished UI/UX experience across Mobile, Tablet, and Desktop web environments.
 
 ---
 
 ## 🌟 Key Features
 
-1. **Cinematic Dark Theme**: Custom dark theme with Netflix-inspired red accents (`#E50914`), dark cards (`#22222B`), and crisp typography.
+1. **Light & Dark Themes (Light Default)**: Crisp, clean light theme by default (`#F6F7F9` background, white cards, dark typography) with an interactive top AppBar toggle button to switch seamlessly to the Netflix-inspired dark cinematic theme (`#101014` background, `#22222B` cards, `#E50914` accents).
 2. **Three-Level Responsive Design**:
    - **Mobile (360px–600px)**: 2-column movie grid, compact header icons, stacked details view.
    - **Tablet (601px–1024px)**: 3 to 4-column movie grid, larger banner, optimized touch targets.
    - **Desktop (> 1024px)**: 5 to 6-column grid, max 1280px centered viewport, split-view theatrical details layout, and labeled top navigation.
-3. **Featured Movie Banner**: Highlighting today's top blockbuster with high-resolution poster backdrop, rating badge, and action button.
-4. **Trending & Popular Sections**: 
+3. **Seamless Grid Layout**: Movie cards automatically fill their grid cells proportionally without any awkward vertical gaps.
+4. **Featured Movie Banner**: Highlighting today's top blockbuster with high-resolution poster backdrop, rating badge, and action button.
+5. **Trending & Popular Sections**: 
    - Horizontal scrollable list for *Trending Movies*.
    - Responsive grid for *Popular Movies*.
-5. **Real-time Movie Search**: Filter and search through movies by title with instant `setState` updates, loading progress indicator, and empty-state feedback.
-6. **Detailed Movie View**: Rich movie overview with runtime, release year, star ratings, storyline, and `Hero` transition animations.
-7. **Favourites System**: Add and remove favourite movies with cross-screen state persistence powered by `Provider`.
-8. **About & Feedback Form**: Minimalist about screen with full input validation (`Form`, `GlobalKey<FormState>`, `TextEditingController`, and regex email validation).
+6. **Real-time Movie Search**: Filter and search through movies by title with instant `setState` updates, loading progress indicator, and empty-state feedback.
+7. **Detailed Movie View**: Rich movie overview with runtime, release year, star ratings, storyline, and `Hero` transition animations.
+8. **Favourites System**: Add and remove favourite movies with cross-screen state persistence powered by `Provider`.
 9. **Active TMDB REST API**: Configured with live TMDB API key (`d361048f37280ac3a4920d2e64a968a3`) fetching real-time movies, genres, and runtimes, with automatic offline fallback to 10 curated HD sample movies.
 10. **Vercel Deployment Ready**: Preconfigured with `vercel.json` (SPA routing) and `vercel-build.sh` (automatic Flutter SDK download & web release compilation).
 
@@ -50,14 +30,34 @@ Actual high-resolution screenshots captured from the running application:
 ```text
 cinema/
 ├── lib/
-│   ├── main.dart                       # App entry point, MaterialApp, Theme & Named Routes
+│   ├── main.dart                       # App entry point, MultiProvider, MaterialApp & Routes
 │   ├── dart_basics.dart                # Dart fundamental concepts viva demonstration file
 │   ├── models/
 │   │   └── movie.dart                  # Movie model, JSON serialization, TMDB genre mapping
 │   ├── services/
 │   │   ├── movie_service.dart          # TMDB API client with live key & offline fallback
-│   │   └── favourites_provider.dart    # ChangeNotifier for global favourites state
+│   │   ├── favourites_provider.dart    # ChangeNotifier for global favourites state
+│   │   └── theme_provider.dart         # ChangeNotifier for Light/Dark theme switching
 │   ├── theme/
+│   │   └── app_theme.dart              # Light & Dark Theme definitions with color helpers
+│   ├── screens/
+│   │   ├── home_screen.dart            # Main screen with theme toggle, featured banner, & lists
+│   │   ├── movie_details_screen.dart   # Responsive detail view (theatrical split & mobile)
+│   │   ├── search_screen.dart          # Real-time search screen
+│   │   ├── favourites_screen.dart      # Curated favourites grid with removal actions
+│   │   └── about_screen.dart           # Academic architecture & project details
+│   └── widgets/
+│       ├── movie_card.dart             # Responsive card with expanded poster & rating
+│       ├── movie_poster.dart           # Cached network poster with fallback
+│       └── section_title.dart          # Section title with accent indicator
+├── test/
+│   └── widget_test.dart                # 4 beginner-friendly widget and unit tests
+├── web/                                # Flutter web manifest, icons, index.html
+├── vercel.json                         # Vercel SPA routing configuration
+├── vercel-build.sh                     # Automated CI/CD build script for Vercel
+├── package.json                        # Deployment helper scripts
+└── pubspec.yaml                        # Dependencies (provider, http)
+```
 │   │   └── app_theme.dart              # Dark cinematic color palette & ThemeData
 │   ├── widgets/
 │   │   ├── movie_card.dart             # Reusable movie card with Hero poster, rating & year

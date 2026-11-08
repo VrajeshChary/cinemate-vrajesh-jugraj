@@ -31,7 +31,7 @@ class MoviePoster extends StatelessWidget {
       child: Container(
         width: width,
         height: height,
-        color: AppTheme.secondaryBackground,
+        color: AppTheme.getSecondaryBg(context),
         child: Image.network(
           imageUrl,
           width: width,
@@ -56,16 +56,16 @@ class MoviePoster extends StatelessWidget {
           },
           errorBuilder: (context, error, stackTrace) {
             return Container(
-              color: AppTheme.secondaryBackground,
-              child: const Center(
+              color: AppTheme.getSecondaryBg(context),
+              child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.movie_outlined, color: AppTheme.secondaryText, size: 36),
-                    SizedBox(height: 6),
+                    Icon(Icons.movie_outlined, color: AppTheme.getSecondaryTextColor(context), size: 36),
+                    const SizedBox(height: 6),
                     Text(
                       'No Image',
-                      style: TextStyle(color: AppTheme.secondaryText, fontSize: 11),
+                      style: TextStyle(color: AppTheme.getSecondaryTextColor(context), fontSize: 11),
                     ),
                   ],
                 ),

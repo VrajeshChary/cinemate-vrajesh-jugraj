@@ -37,7 +37,7 @@ class FavouritesScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('My Favourites'),
         leading: IconButton(
@@ -57,31 +57,31 @@ class FavouritesScreen extends StatelessWidget {
                       children: [
                         Container(
                           padding: const EdgeInsets.all(24),
-                          decoration: const BoxDecoration(
-                            color: AppTheme.secondaryBackground,
+                          decoration: BoxDecoration(
+                            color: AppTheme.getSecondaryBg(context),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.favorite_border,
                             size: 64,
-                            color: AppTheme.secondaryText,
+                            color: AppTheme.getSecondaryTextColor(context),
                           ),
                         ),
                         const SizedBox(height: 20),
-                        const Text(
+                        Text(
                           'No Favourites Yet',
                           style: TextStyle(
-                            color: AppTheme.primaryText,
+                            color: AppTheme.getTextColor(context),
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 8),
-                        const Text(
+                        Text(
                           'Explore trending movies and tap the heart icon on any movie to save it here.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: AppTheme.secondaryText,
+                            color: AppTheme.getSecondaryTextColor(context),
                             fontSize: 14,
                             height: 1.5,
                           ),
