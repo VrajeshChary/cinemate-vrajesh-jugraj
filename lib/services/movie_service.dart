@@ -4,19 +4,17 @@ import '../models/movie.dart';
 
 /// MovieService handles REST API calls to The Movie Database (TMDB).
 /// 
-/// If no API key is provided or if network requests fail, it gracefully
-/// falls back to a built-in list of 10 high-quality sample movies so the
-/// application works immediately without any setup required.
+/// If network requests fail or offline, it gracefully falls back to a built-in
+/// list of 10 high-quality sample movies so the application works seamlessly.
 class MovieService {
-  // Replace this with your personal TMDB API key if you have one.
-  // Obtain one for free at: https://www.themoviedb.org/settings/api
-  static const String apiKey = '';
+  // Configured with active TMDB API key
+  static const String apiKey = 'd361048f37280ac3a4920d2e64a968a3';
 
   static const String _baseUrl = 'https://api.themoviedb.org/3';
 
   /// Fetches trending movies for the current week.
   Future<List<Movie>> getTrendingMovies() async {
-    if (apiKey.isEmpty || apiKey == 'YOUR_TMDB_API_KEY') {
+    if (apiKey.isEmpty) {
       return getSampleTrendingMovies();
     }
 
@@ -39,7 +37,7 @@ class MovieService {
 
   /// Fetches popular movies.
   Future<List<Movie>> getPopularMovies() async {
-    if (apiKey.isEmpty || apiKey == 'YOUR_TMDB_API_KEY') {
+    if (apiKey.isEmpty) {
       return getSamplePopularMovies();
     }
 
@@ -61,14 +59,15 @@ class MovieService {
 
   /// Searches movies by title.
   Future<List<Movie>> searchMovies(String query) async {
-    if (query.trim().isEmpty) {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) {
       return [];
     }
 
-    if (apiKey.isEmpty || apiKey == 'YOUR_TMDB_API_KEY') {
+    if (apiKey.isEmpty) {
       // Search in local sample collection
       final all = [...getSampleTrendingMovies(), ...getSamplePopularMovies()];
-      final queryLower = query.toLowerCase();
+      final queryLower = trimmed.toLowerCase();
       final seenIds = <int>{};
       final matches = <Movie>[];
 
@@ -83,7 +82,7 @@ class MovieService {
     }
 
     try {
-      final encodedQuery = Uri.encodeComponent(query);
+      final encodedQuery = Uri.encodeComponent(trimmed);
       final url = Uri.parse('$_baseUrl/search/movie?api_key=$apiKey&query=$encodedQuery');
       final response = await http.get(url);
 
@@ -97,6 +96,22 @@ class MovieService {
     } catch (e) {
       return [];
     }
+  }
+
+  /// Fetches full movie details including exact runtime and full genres list.
+  Future<Movie?> getMovieDetails(int id) async {
+    if (apiKey.isEmpty) return null;
+
+    try {
+      final url = Uri.parse('$_baseUrl/movie/$id?api_key=$apiKey');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        return Movie.fromJson(data);
+      }
+    } catch (_) {}
+    return null;
   }
 
   // ===========================================================================

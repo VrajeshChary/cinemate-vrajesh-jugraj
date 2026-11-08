@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/movie.dart';
 import '../services/favourites_provider.dart';
+import '../services/movie_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/movie_poster.dart';
 
 /// MovieDetailsScreen displays complete information about a selected movie.
 /// 
 /// Demonstrates:
-/// - StatelessWidget
+/// - StatefulWidget
 /// - Stack layout with dark gradient overlays
-/// - Provider Consumer / Provider.of for favourite toggle
+/// - Provider for favourite toggle
 /// - Responsive scrolling with SingleChildScrollView
 /// - Hero animation matching the source card poster
-class MovieDetailsScreen extends StatelessWidget {
+/// - Asynchronous enhancement of movie details (runtime & genres) from TMDB API
+class MovieDetailsScreen extends StatefulWidget {
   static const String routeName = '/movie-details';
 
   final Movie movie;
@@ -24,10 +26,33 @@ class MovieDetailsScreen extends StatelessWidget {
   });
 
   @override
+  State<MovieDetailsScreen> createState() => _MovieDetailsScreenState();
+}
+
+class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
+  late Movie _movie;
+
+  @override
+  void initState() {
+    super.initState();
+    _movie = widget.movie;
+    _fetchExtraDetails();
+  }
+
+  void _fetchExtraDetails() async {
+    final detailed = await MovieService().getMovieDetails(widget.movie.id);
+    if (detailed != null && mounted) {
+      setState(() {
+        _movie = detailed;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final favouritesProvider = Provider.of<FavouritesProvider>(context);
-    final isFav = favouritesProvider.isFavourite(movie);
+    final isFav = favouritesProvider.isFavourite(_movie);
 
     return Scaffold(
       backgroundColor: AppTheme.background,
@@ -40,9 +65,9 @@ class MovieDetailsScreen extends StatelessWidget {
               children: [
                 // Backdrop / Poster Image with Hero
                 Hero(
-                  tag: 'movie-poster-${movie.id}',
+                  tag: 'movie-poster-${_movie.id}',
                   child: MoviePoster(
-                    imageUrl: movie.backdropUrl,
+                    imageUrl: _movie.backdropUrl,
                     width: double.infinity,
                     height: size.height * 0.45,
                     borderRadius: 0,
@@ -94,13 +119,13 @@ class MovieDetailsScreen extends StatelessWidget {
                             color: isFav ? AppTheme.primaryAccent : AppTheme.primaryText,
                           ),
                           onPressed: () {
-                            favouritesProvider.toggleFavourite(movie);
+                            favouritesProvider.toggleFavourite(_movie);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
                                   isFav
-                                      ? 'Removed "${movie.title}" from favourites'
-                                      : 'Added "${movie.title}" to favourites',
+                                      ? 'Removed "${_movie.title}" from favourites'
+                                      : 'Added "${_movie.title}" to favourites',
                                 ),
                                 duration: const Duration(seconds: 1),
                                 backgroundColor: AppTheme.cardColor,
@@ -123,7 +148,7 @@ class MovieDetailsScreen extends StatelessWidget {
                 children: [
                   // Title
                   Text(
-                    movie.title,
+                    _movie.title,
                     style: const TextStyle(
                       color: AppTheme.primaryText,
                       fontSize: 26,
@@ -138,9 +163,9 @@ class MovieDetailsScreen extends StatelessWidget {
                     spacing: 10,
                     runSpacing: 8,
                     children: [
-                      _buildBadge(Icons.calendar_today, movie.releaseYear),
-                      _buildBadge(Icons.access_time, movie.runtime),
-                      _buildRatingBadge(movie.voteAverage),
+                      _buildBadge(Icons.calendar_today, _movie.releaseYear),
+                      _buildBadge(Icons.access_time, _movie.runtime),
+                      _buildRatingBadge(_movie.voteAverage),
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -154,7 +179,7 @@ class MovieDetailsScreen extends StatelessWidget {
                       border: Border.all(color: AppTheme.cardColor),
                     ),
                     child: Text(
-                      movie.genre,
+                      _movie.genre,
                       style: const TextStyle(
                         color: AppTheme.secondaryText,
                         fontSize: 13,
@@ -177,7 +202,7 @@ class MovieDetailsScreen extends StatelessWidget {
 
                   // Overview / Description
                   Text(
-                    movie.overview,
+                    _movie.overview,
                     style: const TextStyle(
                       color: AppTheme.secondaryText,
                       fontSize: 15,
@@ -192,7 +217,7 @@ class MovieDetailsScreen extends StatelessWidget {
                     height: 50,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        favouritesProvider.toggleFavourite(movie);
+                        favouritesProvider.toggleFavourite(_movie);
                       },
                       icon: Icon(
                         isFav ? Icons.favorite : Icons.favorite_border,
