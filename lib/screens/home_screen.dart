@@ -118,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 8),
               TextButton.icon(
                 icon: const Icon(Icons.info_outline, color: AppTheme.primaryText, size: 18),
-                label: const Text('About & Feedback', style: TextStyle(color: AppTheme.primaryText)),
+                label: const Text('About', style: TextStyle(color: AppTheme.primaryText)),
                 onPressed: () => Navigator.pushNamed(context, AboutScreen.routeName),
               ),
               const SizedBox(width: 24),
