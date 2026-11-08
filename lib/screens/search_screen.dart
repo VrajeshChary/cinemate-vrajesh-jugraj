@@ -184,7 +184,7 @@ class _SearchScreenState extends State<SearchScreen> {
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
-        childAspectRatio: 0.65,
+        childAspectRatio: 0.62,
         crossAxisSpacing: 14,
         mainAxisSpacing: 18,
       ),
@@ -193,8 +193,7 @@ class _SearchScreenState extends State<SearchScreen> {
         final movie = _searchResults[index];
         return MovieCard(
           movie: movie,
-          width: double.infinity,
-          posterHeight: 220,
+          isGrid: true,
           onTap: () {
             Navigator.push(
               context,

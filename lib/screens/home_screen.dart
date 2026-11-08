@@ -271,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     shrinkWrap: true,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: crossAxisCount,
-                      childAspectRatio: 0.65,
+                      childAspectRatio: 0.62,
                       crossAxisSpacing: 14,
                       mainAxisSpacing: 18,
                     ),
@@ -280,8 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       final movie = _popularMovies[index];
                       return MovieCard(
                         movie: movie,
-                        width: double.infinity,
-                        posterHeight: cardPosterHeight,
+                        isGrid: true,
                         onTap: () => _openDetails(movie),
                       );
                     },

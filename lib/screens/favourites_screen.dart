@@ -94,7 +94,7 @@ class FavouritesScreen extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: crossAxisCount,
-                    childAspectRatio: 0.65,
+                    childAspectRatio: 0.62,
                     crossAxisSpacing: 14,
                     mainAxisSpacing: 18,
                   ),
@@ -105,8 +105,7 @@ class FavouritesScreen extends StatelessWidget {
                       children: [
                         MovieCard(
                           movie: movie,
-                          width: double.infinity,
-                          posterHeight: 220,
+                          isGrid: true,
                           onTap: () {
                             Navigator.push(
                               context,
